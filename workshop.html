@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人生支线工作台 · 表格化 · 批量课程</title>
+    <style>
+        :root {
+            --bg: #f7f5f2;
+            --card: #ffffff;
+            --border: #e8e4de;
+            --text: #4a4a4a;
+            --text-light: #9a9a9a;
+            --primary: #7fa99b;
+            --primary-light: #e8f0ed;
+            --primary-dark: #5c8a7c;
+            --accent: #c4a882;
+            --accent-light: #f5ede3;
+            --danger: #e0a0a0;
+            --danger-light: #faf0f0;
+            --warn: #e8c8a0;
+            --warn-light: #faf5ec;
+            --success: #a0c8b8;
+            --success-light: #eef5f1;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            --shadow-hover: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --radius-lg: 16px;
+            --transition: 0.2s ease;
+            --font: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .app-header {
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+        }
+        .app-header h1 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text);
+            letter-spacing: 0.5px;
+        }
+        .app-header h1 span {
+            color: var(--primary);
+            font-weight: 400;
+            font-size: 0.85rem;
+            margin-left: 8px;
+            letter-spacing: 0;
+        }
+        .nav-tabs {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .nav-tab {
+            padding: 8px 18px;
+            border-radius: 20px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 0.88rem;
+            color: var(--text-light);
+            transition: all var(--transition);
+            font-family: var(--font);
+            white-space: nowrap;
+            letter-spacing: 0.3px;
+        }
+        .nav-tab:hover {
+            background: var(--bg);
+            color: var(--text);
+        }
+        .nav-tab.active {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            font-weight: 500;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 20px 60px;
+        }
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            padding: 20px 24px;
+            margin-bottom: 18px;
+            box-shadow: var(--shadow);
+            transition: box-shadow var(--transition);
+        }
+        .card:hover {
+            box-shadow: var(--shadow-hover);
+        }
+        .card-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 14px;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .card-title .icon {
+            font-size: 1.2rem;
+        }
+        .card-subtitle {
+            font-size: 0.82rem;
+            color: var(--text-light);
+            font-weight: 400;
+            margin-left: auto;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--card);
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-family: var(--font);
+            color: var(--text);
+            transition: all var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+        .btn:hover {
+            border-color: var(--primary);
+            color: var(--primary-dark);
+            background: var(--primary-light);
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
+            color: #fff;
+        }
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.78rem;
+            border-radius: 6px;
+        }
+        .btn-danger {
+            color: var(--danger);
+            border-color: #ecd5d5;
+        }
+        .btn-danger:hover {
+            background: var(--danger-light);
+            border-color: var(--danger);
+            color: #c07070;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.82rem;
+            color: var(--text-light);
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 9px 14px;
+            border-radius: var(--radius-sm);
+            border: 1.5px solid var(--border);
+            font-size: 0.88rem;
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            transition: border-color var(--transition);
+            outline: none;
+        }
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            border-color: var(--primary);
+            background: #fff;
+        }
+        .form-textarea {
+            resize: vertical;
+            min-height: 70px;
+        }
+        .form-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+        .form-row .form-group {
+            flex: 1;
+            min-width: 120px;
+            margin-bottom: 0;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+        .tag-high { background: var(--danger-light); color: #c07070; }
+        .tag-mid { background: var(--warn-light); color: #b8864a; }
+        .tag-low { background: var(--success-light); color: #5a8a7a; }
+        .tag-done { background: #f0f0f0; color: #b0b0b0; text-decoration: line-through; }
+        .tag-default { background: var(--bg); color: var(--text-light); }
+
+        /* 通用表格 */
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            margin-top: 12px;
+            background: var(--card);
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+        }
+        .table th,
+        .table td {
+            padding: 10px 14px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+        .table th {
+            background: var(--bg);
+            font-weight: 600;
+            color: var(--text-light);
+            font-size: 0.78rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .table tbody tr:hover {
+            background: #faf9f7;
+        }
+        .table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        .table .actions {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+        .table .empty-message {
+            text-align: center;
+            color: #c0c0c0;
+            padding: 20px;
+            font-style: italic;
+        }
+
+        /* 课程表 */
+        .schedule-table {
+            min-width: 800px;
+        }
+        .schedule-table th {
+            background: var(--bg);
+            font-weight: 600;
+            color: var(--text-light);
+            font-size: 0.78rem;
+            letter-spacing: 0.5px;
+            padding: 10px 6px;
+            text-align: center;
+        }
+        .schedule-table td {
+            padding: 8px 10px;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 0.82rem;
+        }
+        .schedule-cell {
+            cursor: pointer;
+            transition: background var(--transition);
+            min-height: 48px;
+            position: relative;
+        }
+        .schedule-cell:hover {
+            background: var(--primary-light);
+        }
+        .schedule-cell .course-name {
+            font-weight: 500;
+            font-size: 0.82rem;
+            color: var(--text);
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+        .schedule-cell .class-name {
+            font-size: 0.72rem;
+            color: var(--text-light);
+            margin-top: 2px;
+        }
+        .schedule-cell.empty {
+            color: #d0d0d0;
+            font-size: 0.75rem;
+        }
+        .period-label {
+            font-weight: 500;
+            font-size: 0.78rem;
+            color: var(--text-light);
+            white-space: nowrap;
+        }
+        .period-time {
+            font-size: 0.7rem;
+            color: #c0c0c0;
+            display: block;
+        }
+
+        /* 颜色选择器 */
+        .color-swatches {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 4px;
+        }
+        .color-swatch {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        .color-swatch:hover,
+        .color-swatch.selected {
+            border-color: #777;
+            transform: scale(1.1);
+        }
+        .custom-color-input {
+            width: 32px;
+            height: 28px;
+            border: none;
+            padding: 0;
+            background: none;
+            cursor: pointer;
+        }
+
+        /* 日期输入加大 */
+        input[type="date"].form-input {
+            padding: 10px 14px;
+            font-size: 0.9rem;
+            min-height: 40px;
+            background-color: #fff;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+        }
+        input[type="date"].form-input:hover {
+            border-color: var(--primary);
+        }
+
+        /* 模态框 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.35);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+        .modal-overlay.show {
+            display: flex;
+        }
+        .modal {
+            background: var(--card);
+            border-radius: var(--radius-lg);
+            padding: 24px 28px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            animation: modalIn 0.25s ease;
+        }
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .modal h3 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text);
+        }
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        @media (max-width: 768px) {
+            .app-header { padding: 12px 16px; }
+            .nav-tabs { gap: 4px; }
+            .nav-tab { padding: 6px 12px; font-size: 0.78rem; }
+            .main-container { padding: 16px 12px 40px; }
+            .card { padding: 16px 16px; }
+            .form-row { flex-direction: column; gap: 8px; }
+            .table th, .table td { padding: 8px 10px; font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <header class="app-header">
+        <h1>🌿 人生支线工作台 <span>— 温柔地经营你的生活</span></h1>
+        <nav class="nav-tabs" id="navTabs">
+            <button class="nav-tab active" data-tab="schedule">📚 课程表</button>
+            <button class="nav-tab" data-tab="pingpong">🏓 乒乓球</button>
+            <button class="nav-tab" data-tab="finance">💰 资金</button>
+            <button class="nav-tab" data-tab="todo">✅ 待办</button>
+            <button class="nav-tab" data-tab="lesson">📝 备课</button>
+        </nav>
+    </header>
+
+    <div class="main-container">
+        <!-- 课程表支线（空表，批量周数） -->
+        <div class="tab-content active" id="tab-schedule">
+            <div class="card">
+                <div class="card-title">
+                    <span class="icon">📚</span> 课程表支线
+                    <span class="card-subtitle">支持批量设置周数（如1-16）</span>
+                </div>
+                <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:16px;">
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <button class="btn btn-sm" id="prevWeek">←</button>
+                        <span id="weekDisplay" style="font-weight:600; min-width:60px; text-align:center;">第 1 周</span>
+                        <button class="btn btn-sm" id="nextWeek">→</button>
+                    </div>
+                    <div class="form-group" style="max-width:100px; margin-bottom:0;">
+                        <label style="font-size:0.7rem;">总周数</label>
+                        <input type="number" class="form-input" id="totalWeeksInput" value="20" min="1" max="52" style="padding:6px 10px;">
+                    </div>
+                    <div class="form-group" style="max-width:160px; margin-bottom:0;">
+                        <label style="font-size:0.7rem;">学期开始(周一)</label>
+                        <input type="date" class="form-input" id="semesterStartInput" style="padding:6px 10px;">
+                    </div>
+                    <button class="btn btn-sm" id="addPeriodBtn">+ 时间段</button>
+                    <button class="btn btn-sm" id="removePeriodBtn">− 时间段</button>
+                </div>
+                <div class="table-wrapper">
+                    <table class="table schedule-table" id="scheduleTable">
+                        <thead id="scheduleHead"></thead>
+                        <tbody id="scheduleBody"></tbody>
+                    </table>
+                </div>
+                <p style="font-size:0.72rem;color:#c0c0c0;margin-top:8px;">💡 点击单元格批量设置课程（可填写周数范围，如1-16）</p>
+            </div>
+        </div>
+
+        <!-- 乒乓球比赛支线 -->
+        <div class="tab-content" id="tab-pingpong">
+            <div class="card">
+                <div class="card-title">
+                    <span class="icon">🏓</span> 乒乓球比赛支线
+                    <span class="card-subtitle">记录每一次挥拍</span>
+                </div>
+                <button class="btn btn-primary" id="addMatchCycleBtn" style="margin-bottom:16px;">+ 批量添加比赛周期</button>
+                <div id="matchCycleList"></div>
+            </div>
+        </div>
+
+        <!-- 资金支线 -->
+        <div class="tab-content" id="tab-finance">
+            <div class="card">
+                <div class="card-title">
+                    <span class="icon">💰</span> 收入记录
+                    <span class="card-subtitle">每一份努力都值得被记录</span>
+                </div>
+                <div class="form-row" style="margin-bottom:12px;">
+                    <div class="form-group" style="flex:1;min-width:100px;">
+                        <label>类型</label>
+                        <select class="form-select" id="incomeType">
+                            <option value="工资">工资</option>
+                            <option value="生活费">生活费</option>
+                            <option value="兼职">兼职</option>
+                            <option value="其他">其他</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex:1;min-width:100px;">
+                        <label>金额</label>
+                        <input type="number" class="form-input" id="incomeAmount" placeholder="0.00" step="0.01">
+                    </div>
+                    <div class="form-group" style="flex:1;min-width:120px;">
+                        <label>日期</label>
+                        <input type="date" class="form-input" id="incomeDate">
+                    </div>
+                    <button class="btn btn-primary" id="addIncomeBtn" style="flex:0 0 auto;">添加</button>
+                </div>
+                <div class="table-wrapper">
+                    <table class="table" id="incomeTable">
+                        <thead><tr><th>类型</th><th>日期</th><th>金额</th><th>操作</th></tr></thead>
+                        <tbody id="incomeList"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">
+                    <span class="icon">🎯</span> 攒钱项目
+                    <span class="card-subtitle">朝着目标，慢慢靠近</span>
+                </div>
+                <div class="table-wrapper">
+                    <table class="table" id="savingTable">
+                        <thead><tr><th>项目名称</th><th>目标金额</th><th>已存金额</th><th>进度</th><th>操作</th></tr></thead>
+                        <tbody id="savingProjectsList"></tbody>
+                    </table>
+                </div>
+                <div class="add-area" style="margin-top:12px;">
+                    <button class="btn" id="addSavingBtn">+ 新建攒钱项目</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 待办事情支线 -->
+        <div class="tab-content" id="tab-todo">
+            <div class="card">
+                <div class="card-title">
+                    <span class="icon">✅</span> 待办事情
+                    <span class="card-subtitle">分清轻重缓急，从容不迫</span>
+                </div>
+                <div class="form-row" style="margin-bottom:16px; gap:10px;">
+                    <div class="form-group" style="flex:2;min-width:180px;">
+                        <label>待办内容</label>
+                        <input type="text" class="form-input" id="todoText" placeholder="写下一件想做的事...">
+                    </div>
+                    <div class="form-group" style="flex:1;min-width:100px;">
+                        <label>优先级</label>
+                        <select class="form-select" id="todoPriority">
+                            <option value="high">高</option>
+                            <option value="mid" selected>中</option>
+                            <option value="low">低</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex:1;min-width:130px;">
+                        <label>截止日期</label>
+                        <input type="date" class="form-input" id="todoDeadline">
+                    </div>
+                    <button class="btn btn-primary" id="addTodoBtn" style="flex:0 0 auto; min-height:40px;">添加</button>
+                </div>
+                <div class="table-wrapper">
+                    <table class="table" id="todoTable">
+                        <thead><tr><th style="width:40px;">✓</th><th>待办事项</th><th>优先级</th><th>截止日期</th><th>操作</th></tr></thead>
+                        <tbody id="todoList"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 备课支线 -->
+        <div class="tab-content" id="tab-lesson">
+            <div class="card">
+                <div class="card-title">
+                    <span class="icon">📝</span> 学生学习情况
+                    <span class="card-subtitle">关注每一个成长</span>
+                </div>
+                <div class="table-wrapper">
+                    <table class="table" id="studentTable">
+                        <thead><tr><th>姓名</th><th>学习情况</th><th>教学计划</th><th>操作</th></tr></thead>
+                        <tbody id="studentList"></tbody>
+                    </table>
+                </div>
+                <div class="add-area" style="margin-top:12px;">
+                    <button class="btn" id="addStudentBtn">+ 添加学生</button>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">
+                    <span class="icon">📋</span> 备课课程计划
+                    <span class="card-subtitle">有备而来，游刃有余</span>
+                </div>
+                <div class="table-wrapper">
+                    <table class="table" id="planTable">
+                        <thead><tr><th>课程名称</th><th>状态</th><th>内容</th><th>操作</th></tr></thead>
+                        <tbody id="lessonPlanList"></tbody>
+                    </table>
+                </div>
+                <div class="add-area" style="margin-top:12px;">
+                    <button class="btn" id="addPlanBtn">+ 添加备课计划</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模态框 -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modalContent"></div>
+    </div>
+
+    <script>
+        // ==================== 全局状态 ====================
+        const DAYS_OF_WEEK = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+        const STORAGE_KEY = 'life_workbench_state_v2'; // 新版本键名，避免旧数据
+
+        function getDefaultPeriods() {
+            return [
+                { id: 'p1', name: '第1节', time: '8:00-8:45' },
+                { id: 'p2', name: '第2节', time: '8:55-9:40' },
+                { id: 'p3', name: '第3节', time: '10:00-10:45' },
+                { id: 'p4', name: '第4节', time: '10:55-11:40' },
+                { id: 'p5', name: '第5节', time: '14:00-14:45' },
+                { id: 'p6', name: '第6节', time: '14:55-15:40' },
+                { id: 'p7', name: '第7节', time: '16:00-16:45' },
+                { id: 'p8', name: '第8节', time: '16:55-17:40' },
+            ];
+        }
+
+        // 生成全空的周数据（无示例课程）
+        function getEmptyWeekData(periods) {
+            const data = {};
+            DAYS_OF_WEEK.forEach(day => {
+                data[day] = {};
+                periods.forEach(p => {
+                    data[day][p.id] = null;
+                });
+            });
+            return data;
+        }
+
+        // 初始状态
+        let state = {
+            schedule: {
+                totalWeeks: 20,
+                currentWeek: 1,
+                periods: getDefaultPeriods(),
+                weekData: {},          // 存储每周的数据
+                semesterStartDate: '2025-09-01',
+            },
+            pingpong: { cycles: [], nextId: 1 },
+            finance: { incomes: [], savings: [], nextIncomeId: 1, nextSavingId: 1 },
+            todo: { items: [], nextId: 1 },
+            lesson: { students: [], plans: [], nextStudentId: 1, nextPlanId: 1 },
+        };
+
+        // 初始化课程表周数据（全空）
+        function initEmptyScheduleData() {
+            for (let w = 1; w <= state.schedule.totalWeeks; w++) {
+                state.schedule.weekData[w] = getEmptyWeekData(state.schedule.periods);
+            }
+            // 默认学期开始日期为当前周的周一
+            const today = new Date();
+            const dayOfWeek = today.getDay();
+            const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+            const monday = new Date(today);
+            monday.setDate(today.getDate() + mondayOffset);
+            const yyyy = monday.getFullYear();
+            const mm = String(monday.getMonth() + 1).padStart(2, '0');
+            const dd = String(monday.getDate()).padStart(2, '0');
+            state.schedule.semesterStartDate = `${yyyy}-${mm}-${dd}`;
+        }
+        initEmptyScheduleData();
+
+        // 其他模块示例数据（可保留，仅课程表为空）
+        (function initOtherDefaultData() {
+            state.pingpong.cycles.push({
+                id: state.pingpong.nextId++, name: '示例周期（可删除）',
+                startDate: '2025-09-08', endDate: '2025-09-12',
+                days: {
+                    '2025-09-08': [{ id: 1, project: '男单小组赛', opponent: '李明', players: '张三', bigScore: '3-1', smallScore: '11-8, 9-11, 11-7, 11-6', result: 'win' }],
+                    '2025-09-09': [{ id: 2, project: '男双淘汰赛', opponent: '李华/赵明', players: '张三/李四', bigScore: '3-0', smallScore: '11-5, 11-7, 11-4', result: 'win' }],
+                    '2025-09-10': [],
+                    '2025-09-11': [{ id: 3, project: '男单半决赛', opponent: '陈晨', players: '张三', bigScore: '3-2', smallScore: '11-9, 9-11, 11-8, 7-11, 11-9', result: 'win' }],
+                    '2025-09-12': [{ id: 4, project: '男单决赛', opponent: '刘洋', players: '张三', bigScore: '3-1', smallScore: '11-7, 11-9, 9-11, 11-8', result: 'win' }],
+                }
+            });
+            state.finance.incomes.push(
+                { id: state.finance.nextIncomeId++, type: '工资', amount: 5200, date: '2025-08-01' },
+                { id: state.finance.nextIncomeId++, type: '生活费', amount: 2000, date: '2025-08-05' }
+            );
+            state.finance.savings.push(
+                { id: state.finance.nextSavingId++, name: '旅行基金', target: 10000, current: 4500 },
+                { id: state.finance.nextSavingId++, name: '新电脑', target: 8000, current: 3000 }
+            );
+            state.todo.items.push(
+                { id: state.todo.nextId++, text: '示例待办（可删除）', priority: 'mid', deadline: '2025-09-05', done: false }
+            );
+            state.lesson.students.push(
+                { id: state.lesson.nextStudentId++, name: '示例学生', situation: '暂无', plan: '暂无' }
+            );
+            state.lesson.plans.push(
+                { id: state.lesson.nextPlanId++, name: '示例备课计划', content: '暂无', status: '未开始' }
+            );
+        })();
+
+        // ==================== 工具函数 ====================
+        function saveState() {
+            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+        }
+        function loadState() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (parsed && parsed.schedule && parsed.pingpong && parsed.finance && parsed.todo && parsed.lesson) {
+                        state = parsed;
+                        return true;
+                    }
+                }
+            } catch (e) {}
+            return false;
+        }
+        function formatDate(dateStr) {
+            if (!dateStr) return '未设置';
+            const d = new Date(dateStr + 'T00:00:00');
+            return `${d.getMonth()+1}月${d.getDate()}日`;
+        }
+        function getWeekDates(startDate, endDate) {
+            const dates = [];
+            let current = new Date(startDate + 'T00:00:00');
+            const end = new Date(endDate + 'T00:00:00');
+            while (current <= end) {
+                const y = current.getFullYear();
+                const m = String(current.getMonth() + 1).padStart(2, '0');
+                const d = String(current.getDate()).padStart(2, '0');
+                dates.push(`${y}-${m}-${d}`);
+                current.setDate(current.getDate() + 1);
+            }
+            return dates;
+        }
+        function showModal(html) {
+            const overlay = document.getElementById('modalOverlay');
+            const content = document.getElementById('modalContent');
+            content.innerHTML = html;
+            overlay.classList.add('show');
+        }
+        function hideModal() {
+            document.getElementById('modalOverlay').classList.remove('show');
+        }
+        document.getElementById('modalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) hideModal();
+        });
+
+        // ==================== 导航切换 ====================
+        document.getElementById('navTabs').addEventListener('click', function(e) {
+            const tabBtn = e.target.closest('.nav-tab');
+            if (!tabBtn) return;
+            const tabName = tabBtn.dataset.tab;
+            document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+            tabBtn.classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+            document.getElementById('tab-' + tabName).classList.add('active');
+        });
+
+        // ==================== 课程表渲染 ====================
+        function hashColor(courseName) {
+            if (!courseName) return '#e8f0ed';
+            let hash = 0;
+            for (let i = 0; i < courseName.length; i++) {
+                hash = courseName.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            const hue = Math.abs(hash) % 360;
+            return `hsl(${hue}, 50%, 92%)`;
+        }
+
+        function getWeekStartDate(week) {
+            const start = new Date(state.schedule.semesterStartDate + 'T00:00:00');
+            start.setDate(start.getDate() + (week - 1) * 7);
+            return start;
+        }
+
+        function renderSchedule() {
+            const periods = state.schedule.periods;
+            const cw = state.schedule.currentWeek;
+            const wd = state.schedule.weekData[cw] || {};
+            document.getElementById('weekDisplay').textContent = `第 ${cw} 周`;
+            document.getElementById('totalWeeksInput').value = state.schedule.totalWeeks;
+            document.getElementById('semesterStartInput').value = state.schedule.semesterStartDate;
+
+            const weekStart = getWeekStartDate(cw);
+            const dateHeaders = [];
+            for (let i = 0; i < 7; i++) {
+                const d = new Date(weekStart);
+                d.setDate(weekStart.getDate() + i);
+                dateHeaders.push(`${d.getMonth()+1}/${d.getDate()}`);
+            }
+
+            const head = document.getElementById('scheduleHead');
+            head.innerHTML = '<th>时间段</th>' + DAYS_OF_WEEK.map((day, idx) =>
+                `<th>${day}<br><span style="font-weight:400;font-size:0.7rem;color:var(--text-light)">${dateHeaders[idx]}</span></th>`
+            ).join('');
+
+            const body = document.getElementById('scheduleBody');
+            body.innerHTML = '';
+            periods.forEach(period => {
+                const tr = document.createElement('tr');
+                const tdLabel = document.createElement('td');
+                tdLabel.className = 'period-label';
+                tdLabel.innerHTML = `${period.name}<span class="period-time">${period.time}</span>`;
+                tdLabel.style.cursor = 'pointer';
+                tdLabel.title = '点击编辑时间段名称和时间';
+                tdLabel.addEventListener('click', () => openPeriodEditModal(period.id));
+                tr.appendChild(tdLabel);
+
+                DAYS_OF_WEEK.forEach(day => {
+                    const td = document.createElement('td');
+                    td.className = 'schedule-cell';
+                    const cellData = wd[day] && wd[day][period.id] ? wd[day][period.id] : null;
+                    if (cellData && cellData.course) {
+                        const bgColor = cellData.color || hashColor(cellData.course);
+                        td.innerHTML = `
+                            <div class="course-name" style="background-color:${bgColor};">${cellData.course}</div>
+                            <div class="class-name">${cellData.cls || ''}</div>
+                        `;
+                    } else {
+                        td.classList.add('empty');
+                        td.textContent = '—';
+                    }
+                    td.addEventListener('click', () => openCellEditModal(day, period.id, cw));
+                    tr.appendChild(td);
+                });
+                body.appendChild(tr);
+            });
+        }
+
+        // 编辑单元格（支持批量周数）
+        function openCellEditModal(day, periodId, currentWeek) {
+            const wd = state.schedule.weekData[currentWeek] || {};
+            const period = state.schedule.periods.find(p => p.id === periodId);
+            const existing = wd[day] && wd[day][periodId] ? wd[day][periodId] : { course: '', cls: '', color: null };
+            const presetColors = ['#f9e5e5', '#f5e5d5', '#e5f5e5', '#e5e5f5', '#f5e5f5', '#e0f0fa', '#faf0e0', '#e0f0e8'];
+
+            showModal(`
+                <h3>编辑课程 · ${day} ${period ? period.name : ''} (当前第 ${currentWeek} 周)</h3>
+                <p style="font-size:0.8rem;color:var(--text-light);">支持设置多周，例如 1-16 或 3,5,7-10</p>
+                <div class="form-group"><label>课程名称</label><input type="text" class="form-input" id="modalCourseName" value="${existing.course || ''}" placeholder="如：音乐"></div>
+                <div class="form-group"><label>上课班级</label><input type="text" class="form-input" id="modalClassName" value="${existing.cls || ''}" placeholder="如：高一(3)班"></div>
+                <div class="form-row">
+                    <div class="form-group" style="flex:1;"><label>起始周</label><input type="number" class="form-input" id="modalWeekStart" value="${currentWeek}" min="1" max="${state.schedule.totalWeeks}"></div>
+                    <div class="form-group" style="flex:1;"><label>结束周</label><input type="number" class="form-input" id="modalWeekEnd" value="${currentWeek}" min="1" max="${state.schedule.totalWeeks}"></div>
+                </div>
+                <div class="form-group"><label>颜色</label>
+                    <div class="color-swatches">
+                        ${presetColors.map(c => `<div class="color-swatch" style="background:${c}" data-color="${c}"></div>`).join('')}
+                        <input type="color" class="custom-color-input" id="modalCustomColor" value="${existing.color || '#e8f0ed'}" title="自定义颜色">
+                    </div>
+                    <input type="hidden" id="modalSelectedColor" value="${existing.color || ''}">
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-danger" id="modalClearCell">批量清除</button>
+                    <button class="btn" onclick="hideModal()">取消</button>
+                    <button class="btn btn-primary" id="modalSaveCell">批量保存</button>
+                </div>
+            `);
+
+            const swatches = document.querySelectorAll('.color-swatch');
+            swatches.forEach(sw => {
+                sw.addEventListener('click', function() {
+                    swatches.forEach(s => s.classList.remove('selected'));
+                    this.classList.add('selected');
+                    document.getElementById('modalSelectedColor').value = this.dataset.color;
+                    document.getElementById('modalCustomColor').value = this.dataset.color;
+                });
+            });
+            document.getElementById('modalCustomColor').addEventListener('input', function() {
+                document.getElementById('modalSelectedColor').value = this.value;
+                swatches.forEach(s => s.classList.remove('selected'));
+            });
+            const selectedColor = existing.color || '';
+            if (selectedColor) {
+                document.getElementById('modalSelectedColor').value = selectedColor;
+                document.getElementById('modalCustomColor').value = selectedColor;
+                swatches.forEach(s => { if (s.dataset.color === selectedColor) s.classList.add('selected'); });
+            }
+
+            // 批量清除
+            document.getElementById('modalClearCell').addEventListener('click', () => {
+                const start = parseInt(document.getElementById('modalWeekStart').value) || currentWeek;
+                const end = parseInt(document.getElementById('modalWeekEnd').value) || start;
+                if (start > end) { alert('起始周不能大于结束周'); return; }
+                for (let w = start; w <= end; w++) {
+                    if (w >= 1 && w <= state.schedule.totalWeeks) {
+                        if (!state.schedule.weekData[w]) state.schedule.weekData[w] = getEmptyWeekData(state.schedule.periods);
+                        if (!state.schedule.weekData[w][day]) state.schedule.weekData[w][day] = {};
+                        state.schedule.weekData[w][day][periodId] = null;
+                    }
+                }
+                saveState();
+                renderSchedule();
+                hideModal();
+            });
+
+            // 批量保存
+            document.getElementById('modalSaveCell').addEventListener('click', () => {
+                const course = document.getElementById('modalCourseName').value.trim();
+                const cls = document.getElementById('modalClassName').value.trim();
+                const start = parseInt(document.getElementById('modalWeekStart').value) || currentWeek;
+                const end = parseInt(document.getElementById('modalWeekEnd').value) || start;
+                const color = document.getElementById('modalSelectedColor').value || null;
+
+                if (start > end) { alert('起始周不能大于结束周'); return; }
+                if (start < 1 || end > state.schedule.totalWeeks) { alert('周数超出范围'); return; }
+
+                for (let w = start; w <= end; w++) {
+                    if (!state.schedule.weekData[w]) state.schedule.weekData[w] = getEmptyWeekData(state.schedule.periods);
+                    if (!state.schedule.weekData[w][day]) state.schedule.weekData[w][day] = {};
+                    if (!course && !cls) {
+                        state.schedule.weekData[w][day][periodId] = null;
+                    } else {
+                        state.schedule.weekData[w][day][periodId] = { course, cls, color };
+                    }
+                }
+                saveState();
+                renderSchedule();
+                hideModal();
+            });
+        }
+
+        function openPeriodEditModal(periodId) {
+            const period = state.schedule.periods.find(p => p.id === periodId);
+            if (!period) return;
+            showModal(`
+                <h3>编辑时间段</h3>
+                <div class="form-group"><label>时间段名称</label><input type="text" class="form-input" id="modalPeriodName" value="${period.name}"></div>
+                <div class="form-group"><label>时间范围</label><input type="text" class="form-input" id="modalPeriodTime" value="${period.time}"></div>
+                <div class="modal-actions"><button class="btn" onclick="hideModal()">取消</button><button class="btn btn-primary" id="modalSavePeriod">保存</button></div>
+            `);
+            document.getElementById('modalSavePeriod').addEventListener('click', () => {
+                period.name = document.getElementById('modalPeriodName').value.trim() || period.name;
+                period.time = document.getElementById('modalPeriodTime').value.trim() || period.time;
+                saveState();
+                renderSchedule();
+                hideModal();
+            });
+        }
+
+        document.getElementById('prevWeek').addEventListener('click', () => { if (state.schedule.currentWeek > 1) { state.schedule.currentWeek--; renderSchedule(); saveState(); } });
+        document.getElementById('nextWeek').addEventListener('click', () => { if (state.schedule.currentWeek < state.schedule.totalWeeks) { state.schedule.currentWeek++; renderSchedule(); saveState(); } });
+        document.getElementById('totalWeeksInput').addEventListener('change', function() {
+            const newTotal = parseInt(this.value) || 20;
+            if (newTotal < 1 || newTotal > 52) return;
+            const oldTotal = state.schedule.totalWeeks;
+            state.schedule.totalWeeks = newTotal;
+            if (newTotal > oldTotal) {
+                for (let w = oldTotal + 1; w <= newTotal; w++) {
+                    state.schedule.weekData[w] = getEmptyWeekData(state.schedule.periods);
+                }
+            } else {
+                for (let w = newTotal + 1; w <= oldTotal; w++) {
+                    delete state.schedule.weekData[w];
+                }
+            }
+            if (state.schedule.currentWeek > newTotal) state.schedule.currentWeek = newTotal;
+            renderSchedule();
+            saveState();
+        });
+        document.getElementById('semesterStartInput').addEventListener('change', function() { state.schedule.semesterStartDate = this.value || '2025-09-01'; renderSchedule(); saveState(); });
+        document.getElementById('addPeriodBtn').addEventListener('click', () => {
+            const newId = 'p' + (state.schedule.periods.length + 1);
+            const newPeriod = { id: newId, name: `第${state.schedule.periods.length + 1}节`, time: '' };
+            state.schedule.periods.push(newPeriod);
+            for (let w = 1; w <= state.schedule.totalWeeks; w++) {
+                if (state.schedule.weekData[w]) {
+                    DAYS_OF_WEEK.forEach(day => {
+                        if (!state.schedule.weekData[w][day]) state.schedule.weekData[w][day] = {};
+                        state.schedule.weekData[w][day][newId] = null;
+                    });
+                }
+            }
+            renderSchedule();
+            saveState();
+        });
+        document.getElementById('removePeriodBtn').addEventListener('click', () => {
+            if (state.schedule.periods.length <= 1) return;
+            const removed = state.schedule.periods.pop();
+            for (let w = 1; w <= state.schedule.totalWeeks; w++) {
+                if (state.schedule.weekData[w]) {
+                    DAYS_OF_WEEK.forEach(day => {
+                        if (state.schedule.weekData[w][day]) delete state.schedule.weekData[w][day][removed.id];
+                    });
+                }
+            }
+            renderSchedule();
+            saveState();
+        });
+
+        // ==================== 乒乓球比赛（表格化） ====================
+        function renderPingpong() {
+            const container = document.getElementById('matchCycleList');
+            if (state.pingpong.cycles.length === 0) {
+                container.innerHTML = '<div class="empty-hint">还没有比赛周期，点击上方按钮添加吧 🏓</div>';
+                return;
+            }
+            container.innerHTML = '';
+            state.pingpong.cycles.forEach(cycle => {
+                const cycleDiv = document.createElement('div');
+                cycleDiv.className = 'match-cycle';
+                const dates = getWeekDates(cycle.startDate, cycle.endDate);
+                const totalMatches = dates.reduce((sum, d) => sum + (cycle.days[d] ? cycle.days[d].length : 0), 0);
+                cycleDiv.innerHTML = `
+                    <div class="match-cycle-header" style="display:flex; justify-content:space-between; align-items:center; cursor:pointer; padding:10px 16px; background:var(--bg); border-radius:var(--radius-sm); margin-bottom:10px;">
+                        <h4 style="font-size:0.92rem;">📅 ${cycle.name}</h4>
+                        <div style="font-size:0.78rem; color:var(--text-light);">${formatDate(cycle.startDate)} ~ ${formatDate(cycle.endDate)} · ${dates.length}天 · ${totalMatches}场比赛 <span>▾</span></div>
+                    </div>
+                    <div class="match-cycle-body" style="display:none;"></div>
+                `;
+                container.appendChild(cycleDiv);
+                const body = cycleDiv.querySelector('.match-cycle-body');
+                const tableWrapper = document.createElement('div');
+                tableWrapper.className = 'table-wrapper';
+                tableWrapper.innerHTML = `
+                    <table class="table">
+                        <thead><tr><th>日期</th><th>项目</th><th>对手</th><th>我方人员</th><th>大比分</th><th>小比分</th><th>赛果</th><th>操作</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                `;
+                const tbody = tableWrapper.querySelector('tbody');
+                let hasMatches = false;
+                dates.forEach(dateStr => {
+                    const dayMatches = cycle.days[dateStr] || [];
+                    dayMatches.forEach(m => {
+                        hasMatches = true;
+                        const tr = document.createElement('tr');
+                        const resultText = m.result === 'win' ? '🏆 胜' : (m.result === 'loss' ? '💔 负' : '—');
+                        tr.innerHTML = `
+                            <td>${formatDate(dateStr)}</td>
+                            <td>${m.project || '—'}</td>
+                            <td>${m.opponent || '—'}</td>
+                            <td>${m.players || '—'}</td>
+                            <td>${m.bigScore || '—'}</td>
+                            <td>${m.smallScore || '—'}</td>
+                            <td>${resultText}</td>
+                            <td>
+                                <div class="actions">
+                                    <button class="btn btn-sm edit-match-btn" data-cycle-id="${cycle.id}" data-date="${dateStr}" data-match-id="${m.id}">编辑</button>
+                                    <button class="btn btn-sm btn-danger del-match-btn" data-cycle-id="${cycle.id}" data-date="${dateStr}" data-match-id="${m.id}">✕</button>
+                                </div>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                });
+                if (!hasMatches) {
+                    tbody.innerHTML = '<tr><td colspan="8" class="empty-message">暂无比赛记录</td></tr>';
+                }
+                body.appendChild(tableWrapper);
+                // 添加比赛按钮
+                const addBtns = document.createElement('div');
+                addBtns.style.marginTop = '8px';
+                dates.forEach(dateStr => {
+                    const btn = document.createElement('button');
+                    btn.className = 'btn btn-sm add-match-item-btn';
+                    btn.setAttribute('data-cycle-id', cycle.id);
+                    btn.setAttribute('data-date', dateStr);
+                    btn.textContent = `+ 添加 ${formatDate(dateStr)} 比赛`;
+                    addBtns.appendChild(btn);
+                });
+                body.appendChild(addBtns);
+                // 删除周期按钮
+                const delBtn = document.createElement('button');
+                delBtn.className = 'btn btn-sm btn-danger';
+                delBtn.textContent = '删除周期';
+                delBtn.style.marginTop = '8px';
+                delBtn.addEventListener('click', () => {
+                    if (confirm('确定删除这个比赛周期吗？')) {
+                        state.pingpong.cycles = state.pingpong.cycles.filter(c => c.id !== cycle.id);
+                        renderPingpong();
+                        saveState();
+                    }
+                });
+                body.appendChild(delBtn);
+                // 折叠事件
+                cycleDiv.querySelector('.match-cycle-header').addEventListener('click', () => {
+                    body.style.display = body.style.display === 'none' ? 'block' : 'none';
+                });
+                if (state.pingpong.cycles.indexOf(cycle) === 0) body.style.display = 'block';
+            });
+            // 绑定事件
+            document.querySelectorAll('.add-match-item-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const cycleId = parseInt(this.dataset.cycleId);
+                    const dateStr = this.dataset.date;
+                    openAddMatchItemModal(cycleId, dateStr);
+                });
+            });
+            document.querySelectorAll('.edit-match-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const cycleId = parseInt(this.dataset.cycleId);
+                    const dateStr = this.dataset.date;
+                    const matchId = parseInt(this.dataset.matchId);
+                    openEditMatchItemModal(cycleId, dateStr, matchId);
+                });
+            });
+            document.querySelectorAll('.del-match-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const cycleId = parseInt(this.dataset.cycleId);
+                    const dateStr = this.dataset.date;
+                    const matchId = parseInt(this.dataset.matchId);
+                    const cycle = state.pingpong.cycles.find(c => c.id === cycleId);
+                    if (cycle && cycle.days[dateStr]) {
+                        cycle.days[dateStr] = cycle.days[dateStr].filter(m => m.id !== matchId);
+                        renderPingpong();
+                        saveState();
+                    }
+                });
+            });
+        }
+
+        function getNextMatchItemId(cycle) {
+            let maxId = 0;
+            Object.values(cycle.days).forEach(arr => arr.forEach(m => { if (m.id > maxId) maxId = m.id; }));
+            return maxId + 1;
+        }
+        function openAddMatchItemModal(cycleId, dateStr) {
+            showModal(`
+                <h3>添加比赛 · ${formatDate(dateStr)}</h3>
+                <div class="form-group"><label>比赛项目</label><input type="text" class="form-input" id="modalMatchProject" placeholder="如：男单小组赛"></div>
+                <div class="form-group"><label>对手</label><input type="text" class="form-input" id="modalMatchOpponent" placeholder="对手姓名/队名"></div>
+                <div class="form-group"><label>比赛人员</label><input type="text" class="form-input" id="modalMatchPlayers" placeholder="我方参赛人员"></div>
+                <div class="form-row">
+                    <div class="form-group" style="flex:1;"><label>大比分</label><input type="text" class="form-input" id="modalMatchBigScore" placeholder="如：3-1"></div>
+                    <div class="form-group" style="flex:1;"><label>赛果</label><select class="form-select" id="modalMatchResult"><option value="win">胜 🏆</option><option value="loss">负 💔</option><option value="">未定</option></select></div>
+                </div>
+                <div class="form-group"><label>小比分</label><input type="text" class="form-input" id="modalMatchSmallScore" placeholder="如：11-8, 9-11, 11-7"></div>
+                <div class="modal-actions"><button class="btn" onclick="hideModal()">取消</button><button class="btn btn-primary" id="modalSaveMatch">保存</button></div>
+            `);
+            document.getElementById('modalSaveMatch').addEventListener('click', () => {
+                const cycle = state.pingpong.cycles.find(c => c.id === cycleId);
+                if (!cycle) return;
+                if (!cycle.days[dateStr]) cycle.days[dateStr] = [];
+                const newMatch = {
+                    id: getNextMatchItemId(cycle),
+                    project: document.getElementById('modalMatchProject').value.trim() || '比赛',
+                    opponent: document.getElementById('modalMatchOpponent').value.trim() || '未知',
+                    players: document.getElementById('modalMatchPlayers').value.trim() || '',
+                    bigScore: document.getElementById('modalMatchBigScore').value.trim() || '—',
+                    smallScore: document.getElementById('modalMatchSmallScore').value.trim() || '',
+                    result: document.getElementById('modalMatchResult').value || '',
+                };
+                cycle.days[dateStr].push(newMatch);
+                renderPingpong();
+                saveState();
+                hideModal();
+            });
+        }
+        function openEditMatchItemModal(cycleId, dateStr, matchId) {
+            const cycle = state.pingpong.cycles.find(c => c.id === cycleId);
+            if (!cycle || !cycle.days[dateStr]) return;
+            const match = cycle.days[dateStr].find(m => m.id === matchId);
+            if (!match) return;
+            showModal(`
+                <h3>编辑比赛</h3>
+                <div class="form-group"><label>比赛项目</label><input type="text" class="form-input" id="modalMatchProject" value="${match.project || ''}"></div>
+                <div class="form-group"><label>对手</label><input type="text" class="form-input" id="modalMatchOpponent" value="${match.opponent || ''}"></div>
+                <div class="form-group"><label>比赛人员</label><input type="text" class="form-input" id="modalMatchPlayers" value="${match.players || ''}"></div>
+                <div class="form-row">
+                    <div class="form-group" style="flex:1;"><label>大比分</label><input type="text" class="form-input" id="modalMatchBigScore" value="${match.bigScore || ''}"></div>
+                    <div class="form-group" style="flex:1;"><label>赛果</label><select class="form-select" id="modalMatchResult"><option value="win" ${match.result === 'win' ? 'selected' : ''}>胜 🏆</option><option value="loss" ${match.result === 'loss' ? 'selected' : ''}>负 💔</option><option value="" ${!match.result ? 'selected' : ''}>未定</option></select></div>
+                </div>
+                <div class="form-group"><label>小比分</label><input type="text" class="form-input" id="modalMatchSmallScore" value="${match.smallScore || ''}"></div>
+                <div class="modal-actions"><button class="btn" onclick="hideModal()">取消</button><button class="btn btn-primary" id="modalSaveMatchEdit">保存</button></div>
+            `);
+            document.getElementById('modalSaveMatchEdit').addEventListener('click', () => {
+                match.project = document.getElementById('modalMatchProject').value.trim() || match.project;
+                match.opponent = document.getElementById('modalMatchOpponent').value.trim() || match.opponent;
+                match.players = document.getElementById('modalMatchPlayers').value.trim() || match.players;
+                match.bigScore = document.getElementById('modalMatchBigScore').value.trim() || match.bigScore;
+                match.smallScore = document.getElementById('modalMatchSmallScore').value.trim() || match.smallScore;
+                match.result = document.getElementById('modalMatchResult').value;
+                renderPingpong();
+                saveState();
+                hideModal();
+            });
+        }
+        document.getElementById('addMatchCycleBtn').addEventListener('click', () => {
+            showModal(`
+                <h3>批量添加比赛周期</h3>
+                <p style="font-size:0.8rem;color:var(--text-light);margin-bottom:12px;">填写日期范围，系统会自动为每一天创建比赛条目</p>
+                <div class="form-group"><label>周期名称</label><input type="text" class="form-input" id="modalCycleName" placeholder="如：9.8-9.12 秋季锦标赛"></div>
+                <div class="form-row">
+                    <div class="form-group" style="flex:1;"><label>开始日期</label><input type="date" class="form-input" id="modalCycleStart"></div>
+                    <div class="form-group" style="flex:1;"><label>结束日期</label><input type="date" class="form-input" id="modalCycleEnd"></div>
+                </div>
+                <div class="modal-actions"><button class="btn" onclick="hideModal()">取消</button><button class="btn btn-primary" id="modalSaveCycle">创建周期</button></div>
+            `);
+            document.getElementById('modalSaveCycle').addEventListener('click', () => {
+                const name = document.getElementById('modalCycleName').value.trim() || '未命名周期';
+                const start = document.getElementById('modalCycleStart').value;
+                const end = document.getElementById('modalCycleEnd').value;
+                if (!start || !end || start > end) { alert('请选择有效的日期范围'); return; }
+                const dates = getWeekDates(start, end);
+                const daysObj = {};
+                dates.forEach(d => { daysObj[d] = []; });
+                state.pingpong.cycles.push({ id: state.pingpong.nextId++, name, startDate: start, endDate: end, days: daysObj });
+                renderPingpong();
+                saveState();
+                hideModal();
+            });
+        });
+
+        // ==================== 资金模块（表格化） ====================
+        function renderFinance() {
+            const incomeTbody = document.getElementById('incomeList');
+            if (state.finance.incomes.length === 0) {
+                incomeTbody.innerHTML = '<tr><td colspan="4" class="empty-message">暂无收入记录</td></tr>';
+            } else {
+                const sorted = [...state.finance.incomes].sort((a, b) => b.date.localeCompare(a.date));
+                incomeTbody.innerHTML = sorted.map(inc => `
+                    <tr>
+                        <td>${inc.type}</td>
+                        <td>${inc.date}</td>
+                        <td>+¥${inc.amount.toFixed(2)}</td>
+                        <td><button class="btn btn-sm btn-danger" data-income-id="${inc.id}">✕</button></td>
+                    </tr>
+                `).join('');
+                incomeTbody.querySelectorAll('.btn-danger').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        state.finance.incomes = state.finance.incomes.filter(i => i.id !== parseInt(btn.dataset.incomeId));
+                        renderFinance();
+                        saveState();
+                    });
+                });
+            }
+
+            const savingTbody = document.getElementById('savingProjectsList');
+            if (state.finance.savings.length === 0) {
+                savingTbody.innerHTML = '<tr><td colspan="5" class="empty-message">暂无攒钱项目</td></tr>';
+            } else {
+                savingTbody.innerHTML = state.finance.savings.map(s => {
+                    const pct = s.target > 0 ? Math.min(100, (s.current / s.target) * 100) : 0;
+                    return `
+                        <tr>
+                            <td>${s.name}</td>
+                            <td>¥${s.target.toFixed(0)}</td>
+                            <td>¥${s.current.toFixed(0)}</td>
+                            <td>
+                                <div class="progress-bar" style="height:10px;background:var(--bg);border-radius:5px;overflow:hidden;">
+                                    <div class="progress-fill" style="height:100%;background:linear-gradient(90deg,var(--primary),var(--accent));width:${pct}%;"></div>
+                                </div>
+                                <span style="font-size:0.72rem;">${pct.toFixed(0)}%</span>
+                            </td>
+                            <td>
+                                <div class="actions">
+                                    <button class="btn btn-sm edit-saving-btn" data-saving-id="${s.id}">编辑金额</button>
+                                    <button class="btn btn-sm edit-saving-target-btn" data-saving-id="${s.id}">修改目标</button>
+                                    <button class="btn btn-sm btn-danger" data-saving-id="${s.id}">✕</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+                savingTbody.querySelectorAll('.edit-saving-btn').forEach(btn => {
+                    btn.addEventListener('click', () => openEditSavingAmountModal(parseInt(btn.dataset.savingId)));
+                });
+                savingTbody.querySelectorAll('.edit-saving-target-btn').forEach(btn => {
+                    btn.addEventListener('click', () => openEditSavingTargetModal(parseInt(btn.dataset.savingId)));
+                });
+                savingTbody.querySelectorAll('.btn-danger').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        state.finance.savings = state.finance.savings.filter(x => x.id !== parseInt(btn.dataset.savingId));
+                        renderFinance();
+                        saveState();
+                    });
+                });
+            }
+        }
+        function openEditSavingAmountModal(savingId) {
+            const s = state.finance.savings.find(x => x.id === savingId);
+            if (!s) return;
+            showModal(`
+                <h3>编辑「${s.name}」已存金额</h3>
+                <div class="form-group"><label>当前已存金额</label><input type="number" class="form-input" id="modalSavingCurrent" value="${s.current}" step="0.01"></div>
+                <div class="modal-actions"><button class="btn" onclick="hideModal()">取消</button><button class="btn btn-primary" id="modalSaveSavingAmount">保存</button></div>
+            `);
+            document.getElementById('modalSaveSavingAmount').addEventListener('click', () => {
+                s.current = parseFloat(document.getElementById('modalSavingCurrent').value) || 0;
+                renderFinance();
+                saveState();
+                hideModal();
+            });
+        }
+        function openEditSavingTargetModal(savingId) {
+            const s = state.finance.savings.find(x => x.id === savingId);
+            if (!s) return;
+            showModal(`
+                <h3>修改「${s.name}」目标金额</h3>
+                <div class="form-group"><label>目标金额</label><input type="number" class="form-input" id="modalSavingTarget" value="${s.target}" step="0.01"></div>
+                <div class="form-group"><label>项目名称</label><input type="text" class="form-input" id="modalSavingName" value="${s.name}"></div>
+                <div class="modal-actions"><button class="btn" onclick="hideModal()">取消</button><button class="btn btn-primary" id="modalSaveSavingTarget">保存</button></div>
+            `);
+            document.getElementById('modalSaveSavingTarget').addEventListener('click', () => {
+                s.target = parseFloat(document.getElementById('modalSavingTarget').value) || 0;
+                s.name = document.getElementById('modalSavingName').value.trim() || s.name;
+                renderFinance();
+                saveState();
+                hideModal();
+            });
+        }
+        document.getElementById('addIncomeBtn').addEventListener('click', () => {
+            const type = document.getElementById('incomeType').value;
+            const amount = parseFloat(document.getElementById('incomeAmount').value);
+            const date = document.getElementById('incomeDate').value || new Date().toISOString().slice(0, 10);
+            if (!amount || amount <= 0) { alert('请输入有效金额'); return; }
+            state.finance.incomes.push({ id: state.finance.nextIncomeId++, type, amount, date });
+            document.getElementById('incomeAmount').value = '';
+            renderFinance();
+            saveState();
+        });
+        document.getElementById('addSavingBtn').addEventListener('click', () => {
+            showModal(`
+                <h3>新建攒钱项目</h3>
+                <div class="form-group"><label>项目名称</label><input type="text" class="form-input" id="modalNewSavingName" placeholder="如：旅行基金"></div>
+                <div class="form-group"><label>目标金额</label><input type="number" class="form-input" id="modalNewSavingTarget" placeholder="如：10000" step="0.01"></div>
+                <div class="form-group"><label>初始已存金额</label><input type="number" class="form-input" id="modalNewSavingCurrent" placeholder="如：0" value="0" step="0.01"></div>
+                <div class="modal-actions"><button class="btn" onclick="hideModal()">取消</button><button class="btn btn-primary" id="modalSaveNewSaving">创建</button></div>
+            `);
+            document.getElementById('modalSaveNewSaving').addEventListener('click', () => {
+                const name = document.getElementById('modalNewSavingName').value.trim() || '未命名项目';
+                const target = parseFloat(document.getElementById('modalNewSavingTarget').value) || 0;
+                const current = parseFloat(document.getElementById('modalNewSavingCurrent').value) || 0;
+                state.finance.savings.push({ id: state.finance.nextSavingId++, name, target, current });
+                renderFinance();
+                saveState();
+                hideModal();
+            });
+        });
+
+        // ==================== 待办模块（表格化） ====================
+        function renderTodo() {
+            const tbody = document.getElementById('todoList');
+            if (state.todo.items.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="empty-message">暂无待办，享受此刻的轻松 ☕</td></tr>';
+                return;
+            }
+            const priorityOrder = { high: 0, mid: 1, low: 2 };
+            const sorted = [...state.todo.items].sort((a, b) => {
+                if (a.done !== b.done) return a.done ? 1 : -1;
+                return (priorityOrder[a.priority] || 1) - (priorityOrder[b.priority] || 1);
+            });
+            tbody.innerHTML = sorted.map(item => {
+                const prioTag = item.priority === 'high' ? '<span class="tag tag-high">高</span>' :
+                    item.priority === 'mid' ? '<span class="tag tag-mid">中</span>' : '<span class="tag tag-low">低</span>';
+                const doneStyle = item.done ? 'text-decoration:line-through; color:var(--text-light);' : '';
+                return `
+                    <tr>
+                        <td><div class="todo-check ${item.done ? 'checked' : ''}" data-todo-id="${item.id}" style="cursor:pointer;">${item.done ? '✓' : ''}</div></td>
+                        <td style="${doneStyle}">${item.text}</td>
+                        <td>${prioTag}</td>
+                        <td>${item.deadline ? formatDate(item.deadline) : ''}</td>
+                        <td><button class="btn btn-sm btn-danger" data-todo-del="${item.id}">✕</button></td>
+                    </tr>
+                `;
+            }).join('');
+            tbody.querySelectorAll('.todo-check').forEach(checkbox => {
+                checkbox.addEventListener('click', () => {
+                    const id = parseInt(checkbox.dataset.todoId);
+                    const item = state.todo.items.find(t => t.id === id);
+                    if (item) { item.done = !item.done; renderTodo(); saveState(); }
+                });
+            });
+            tbody.querySelectorAll('.btn-danger').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    state.todo.items = state.todo.items.filter(t => t.id !== parseInt(btn.dataset.todoDel));
+                    renderTodo();
+                    saveState();
+                });
+            });
+        }
+        document.getElementById('addTodoBtn').addEventListener('click', () => {
+            const text = document.getElementById('todoText').value.trim();
+            if (!text) return;
+            const priority = document.getElementById('todoPriority').value;
+            const deadline = document.getElementById('todoDeadline').value;
+            state.todo.items.push({ id: state.todo.nextId++, text, priority, deadline, done: false });
+            document.getElementById('todoText').value = '';
+            document.getElementById('todoDeadline').value = '';
+            renderTodo();
+            saveState();
+        });
+        document.getElementById('todoText').addEventListener('keydown', (e) => { if (e.key === 'Enter') document.getElementById('addTodoBtn').click(); });
+
+        // ==================== 备课模块（表格化） ====================
+        function renderLesson() {
+            const studentTbody = document.getElementById('studentList');
+            if (state.lesson.students.length === 0) {
+                studentTbody.innerHTML = '<tr><td colspan="4" class="empty-message">暂无学生记录</td></tr>';
+            } else {
+                studentTbody.innerHTML = state.lesson.students.map(stu => `
+                    <tr>
+                        <td>${stu.name}</td>
+                        <td>${stu.situation || '—'}</td>
+                        <td>${stu.plan || '—'}</td>
+                        <td>
+                            <div class="actions">
+                                <button class="btn btn-sm edit-student-btn" data-student-id="${stu.id}">编辑</button>
+                                <button class="btn btn-sm btn-danger del-student-btn" data-student-id="${stu.id}">✕</button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+                studentTbody.querySelectorAll('.edit-student-btn').forEach(btn => {
+                    btn.addEventListener('click', () => openEditStudentModal(parseInt(btn.dataset.studentId)));
+                });
+                studentTbody.querySelectorAll('.del-student-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        state.lesson.students = state.lesson.students.filter(s => s.id !== parseInt(btn.dataset.studentId));
+                        renderLesson();
+                        saveState();
+                    });
+                });
+            }
+
+            const planTbody = document.getElementById('lessonPlanList');
+            if (state.lesson.plans.length === 0) {
+                planTbody.innerHTML = '<tr><td colspan="4" class="empty-message">暂无备课计划</td></tr>';
+            } else {
+                planTbody.innerHTML = state.lesson.plans.map(plan => `
+                    <tr>
+                        <td>${plan.name}</td>
+                        <td><span class="tag tag-default">${plan.status || '未开始'}</span></td>
+                        <td>${plan.content || '—'}</td>
+                        <td>
+                            <div class="actions">
+                                <button class="btn btn-sm edit-plan-btn" data-plan-id="${plan.id}">编辑</button>
+                                <button class="btn btn-sm btn-danger del-plan-btn" data-plan-id="${plan.id}">✕</button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+                planTbody.querySelectorAll('.edit-plan-btn').forEach(btn => {
+                    btn.addEventListener('click', () => openEditPlanModal(parseInt(btn.dataset.planId)));
+                });
+                planTbody.querySelectorAll('.del-plan-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        state.lesson.plans = state.lesson.plans.filter(p => p.id !== parseInt(btn.dataset.planId));
+                        renderLesson();
+                        saveState();
+                    });
+                });
+            }
+        }
+        function openEditStudentModal(studentId) {
+            const stu = state.lesson.students.find(s => s.id === studentId);
+            if (!stu) return;
+            showModal(`
+                <h3>编辑学生 · ${stu.name}</h3>
+                <div class="form-group"><label>姓名</label><input type="text" class="form-input" id="modalStudentName" value="${stu.name}"></div>
+                <div class="form-group"><label>学习情况</label><textarea class="form-textarea" id="modalStudentSituation">${stu.situation || ''}</textarea></div>
+                <div class="form-group"><label>教学计划</label><textarea class="form-textarea" id="modalStudentPlan">${stu.plan || ''}</textarea></div>
+                <div class="modal-actions"><button class="btn" onclick="hideModal()">取消</button><button class="btn btn-primary" id="modalSaveStudent">保存</button></div>
+            `);
+            document.getElementById('modalSaveStudent').addEventListener('click', () => {
+                stu.name = document.getElementById('modalStudentName').value.trim() || stu.name;
+                stu.situation = document.getElementById('modalStudentSituation').value.trim();
+                stu.plan = document.getElementById('modalStudentPlan').value.trim();
+                renderLesson();
+                saveState();
+                hideModal();
+            });
+        }
+        function openEditPlanModal(planId) {
+            const plan = state.lesson.plans.find(p => p.id === planId);
+            if (!plan) return;
+            showModal(`
+                <h3>编辑备课计划</h3>
+                <div class="form-group"><label>课程名称</label><input type="text" class="form-input" id="modalPlanName" value="${plan.name}"></div>
+                <div class="form-group"><label>计划内容</label><textarea class="form-textarea" id="modalPlanContent">${plan.content || ''}</textarea></div>
+                <div class="form-group"><label>状态</label><select class="form-select" id="modalPlanStatus"><option value="未开始" ${plan.status === '未开始' ? 'selected' : ''}>未开始</option><option value="进行中" ${plan.status === '进行中' ? 'selected' : ''}>进行中</option><option value="已完成" ${plan.status === '已完成' ? 'selected' : ''}>已完成</option></select></div>
+                <div class="modal-actions"><button class="btn" onclick="hideModal()">取消</button><button class="btn btn-primary" id="modalSavePlan">保存</button></div>
+            `);
+            document.getElementById('modalSavePlan').addEventListener('click', () => {
+                plan.name = document.getElementById('modalPlanName').value.trim() || plan.name;
+                plan.content = document.getElementById('modalPlanContent').value.trim();
+                plan.status = document.getElementById('modalPlanStatus').value;
+                renderLesson();
+                saveState();
+                hideModal();
+            });
+        }
+        document.getElementById('addStudentBtn').addEventListener('click', () => {
+            showModal(`
+                <h3>添加学生</h3>
+                <div class="form-group"><label>姓名</label><input type="text" class="form-input" id="modalNewStudentName" placeholder="学生姓名"></div>
+                <div class="form-group"><label>学习情况</label><textarea class="form-textarea" id="modalNewStudentSituation"></textarea></div>
+                <div class="form-group"><label>教学计划</label><textarea class="form-textarea" id="modalNewStudentPlan"></textarea></div>
+                <div class="modal-actions"><button class="btn" onclick="hideModal()">取消</button><button class="btn btn-primary" id="modalSaveNewStudent">添加</button></div>
+            `);
+            document.getElementById('modalSaveNewStudent').addEventListener('click', () => {
+                const name = document.getElementById('modalNewStudentName').value.trim();
+                if (!name) return;
+                state.lesson.students.push({ id: state.lesson.nextStudentId++, name, situation: document.getElementById('modalNewStudentSituation').value.trim(), plan: document.getElementById('modalNewStudentPlan').value.trim() });
+                renderLesson();
+                saveState();
+                hideModal();
+            });
+        });
+        document.getElementById('addPlanBtn').addEventListener('click', () => {
+            showModal(`
+                <h3>添加备课计划</h3>
+                <div class="form-group"><label>课程名称</label><input type="text" class="form-input" id="modalNewPlanName" placeholder="如：第三单元备课"></div>
+                <div class="form-group"><label>计划内容</label><textarea class="form-textarea" id="modalNewPlanContent"></textarea></div>
+                <div class="form-group"><label>状态</label><select class="form-select" id="modalNewPlanStatus"><option value="未开始">未开始</option><option value="进行中" selected>进行中</option><option value="已完成">已完成</option></select></div>
+                <div class="modal-actions"><button class="btn" onclick="hideModal()">取消</button><button class="btn btn-primary" id="modalSaveNewPlan">添加</button></div>
+            `);
+            document.getElementById('modalSaveNewPlan').addEventListener('click', () => {
+                const name = document.getElementById('modalNewPlanName').value.trim();
+                if (!name) return;
+                state.lesson.plans.push({ id: state.lesson.nextPlanId++, name, content: document.getElementById('modalNewPlanContent').value.trim(), status: document.getElementById('modalNewPlanStatus').value });
+                renderLesson();
+                saveState();
+                hideModal();
+            });
+        });
+
+        // ==================== 初始化渲染 ====================
+        function renderAll() {
+            renderSchedule();
+            renderPingpong();
+            renderFinance();
+            renderTodo();
+            renderLesson();
+        }
+
+        // 加载状态或使用默认
+        if (!loadState()) {
+            // 使用默认初始状态（课程表空）
+        }
+        renderAll();
+        window.addEventListener('beforeunload', saveState);
+    </script>
+</body>
+</html>
